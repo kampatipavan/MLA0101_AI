@@ -1,0 +1,73 @@
+from collections import deque
+
+# Jug capacities
+jug1 = 11
+jug2 = 9
+
+# Target amount
+target = 8
+
+# BFS Function
+def water_jug_bfs():
+
+    visited = set()
+    queue = deque()
+
+    # Initial State (0,0)
+    queue.append(((0, 0), []))
+
+    while queue:
+
+        (x, y), path = queue.popleft()
+
+        if (x, y) in visited:
+            continue
+
+        visited.add((x, y))
+
+        # Goal Test
+        if x == target or y == target:
+            return path + [(x, y)]
+
+        next_states = []
+
+        # Fill Jug1
+        next_states.append((jug1, y))
+
+        # Fill Jug2
+        next_states.append((x, jug2))
+
+        # Empty Jug1
+        next_states.append((0, y))
+
+        # Empty Jug2
+        next_states.append((x, 0))
+
+        # Pour Jug1 -> Jug2
+        transfer = min(x, jug2 - y)
+        next_states.append((x - transfer, y + transfer))
+
+        # Pour Jug2 -> Jug1
+        transfer = min(y, jug1 - x)
+        next_states.append((x + transfer, y - transfer))
+
+        for state in next_states:
+            if state not in visited:
+                queue.append((state, path + [(x, y)]))
+
+    return None
+
+
+solution = water_jug_bfs()
+
+if solution:
+
+    print("Solution Path:\n")
+
+    for step in solution:
+        print(step)
+
+    print("\nTotal Moves =", len(solution) - 1)
+
+else:
+    print("No Solution Found")
